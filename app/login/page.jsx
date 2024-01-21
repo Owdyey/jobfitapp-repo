@@ -1,71 +1,71 @@
 "use client";
-import React from "react";
+// Import necessary modules and components
+import React, { useState } from "react";
 import { TextField } from "@mui/material";
 import { auth } from "@utils/firebaseConfig";
-import { fetchSignInMethodsForEmail } from "firebase/auth";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-const page = () => {
-  const router = useRouter();
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [emailStatus, setEmailStatus] = useState(null);
-  const [heading, setHeading] = useState("Login Account!");
 
-  const emailCheck = async () => {
-    console.log(email);
+// Functional component for the login page
+const LoginPage = () => {
+  // Router instance
+  const router = useRouter();
+
+  // State variables for email, password, and error handling
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showError, setShowError] = useState(false);
+
+  // Function to handle the login process
+  const handleLogin = async () => {
     try {
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      if (methods.length < 0) {
-        console.log("methods are:", methods);
-        setEmailStatus(true);
-      } else {
-        setEmailStatus(false);
-        setHeading("Email not registered");
-        console.log(methods);
-      }
+      // Attempt to sign in with the provided email and password
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // Redirect to the home page upon successful login
+      router.push("/");
     } catch (error) {
-      console.error("Error checking email:", error);
+      console.error("Error during login:", error);
+
+      // Set showError to true based on specific error conditions
+      setShowError(
+        error.code === "auth/invalid-credential" ||
+          error.code === "auth/missing-email" ||
+          error.code === "auth/invalid-email"
+      );
     }
   };
+
   return (
     <section className="lg:mt-24 w-full flex justify-center">
       <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border border-orange-300">
-        <h3 className="desc text-center mb-2 ">
-          <span className="text-orange-600">{heading}</span>
+        <h3 className="desc text-center mb-2">
+          <span className="text-orange-600">Login Account</span>
         </h3>
-        <div className="  flex flex-col gap-5 ">
+        <div className="flex flex-col gap-5">
+          {/* TextField for Email */}
           <TextField
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
             variant="outlined"
-            onChange={(event) => {
-              const userEmail = event.target.value;
-              setEmail(userEmail);
-            }}
+            onChange={(event) => setEmail(event.target.value)}
           />
-          {emailStatus && (
-            <TextField
-              id="password"
-              label="Password"
-              type="password"
-              variant="outlined"
-              onChange={(event) => {
-                const userPassword = event.target.value;
-                setPassword(userPassword);
-              }}
-            />
-          )}
+          {/* TextField for Password */}
+          <TextField
+            id="password"
+            label="Password"
+            type="password"
+            variant="outlined"
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
+        {/* Display error message if showError is true */}
+        {showError && <p className="text-red-600">Invalid email or password</p>}
         <div className="flex flex-col gap-2">
-          <button className="orangelg_btn" onClick={emailCheck}>
+          {/* Button to trigger login */}
+          <button className="orangelg_btn" onClick={handleLogin}>
             <span className="text-lg flex">
-              <span className="ps-1">Next</span>
+              <span className="ps-1">Login</span>
             </span>
           </button>
         </div>
@@ -74,4 +74,5 @@ const page = () => {
   );
 };
 
-export default page;
+// Export the LoginPage component
+export default LoginPage;

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { auth } from "@utils/firebaseConfig";
+import { useRouter } from "next/navigation";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -11,6 +12,7 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Nav = () => {
+  const router = useRouter();
   const [loginStatus, setLoginStatus] = useState(null);
   const [toggleUser, setToggleUser] = useState(false);
 
@@ -27,6 +29,11 @@ const Nav = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleGoToProfile = () => {
+    setToggleUser(!toggleUser);
+    router.push("/profile");
   };
 
   useEffect(() => {
@@ -54,7 +61,9 @@ const Nav = () => {
           </button>
           {toggleUser && (
             <div className="border relative dropdown">
-              <button className="dropdown_link">Profile</button>
+              <button className="dropdown_link" onClick={handleGoToProfile}>
+                Profile
+              </button>
               <button className="orange_btn w-full" onClick={handleLogout}>
                 Logout
               </button>

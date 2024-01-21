@@ -46,8 +46,6 @@ const SignupPage = () => {
         );
 
         // Send email verification
-        await sendEmailVerification(userCredential.user);
-        setUid(userCredential.user.uid);
       } else {
         // Handle case where email or password is missing
         console.error("Email and password are required.");
@@ -68,7 +66,7 @@ const SignupPage = () => {
         setUid(user.uid);
         setNotLogin(false);
         addUserToFirestore();
-        router.push("/login/create-acc/verification");
+        router.push("/");
       } else {
         setNotLogin(true);
       }
