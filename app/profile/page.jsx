@@ -5,6 +5,7 @@ import { db, auth } from "@utils/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { Avatar } from "@mui/material";
 import { Email, LocationOn, Person, Phone } from "@mui/icons-material";
+import Link from "next/link";
 
 const InformationFormat = ({ icon, data }) => {
   return (
@@ -163,7 +164,14 @@ const YourComponent = () => {
           </div>
         </div>
       ) : (
-        <div>You're not Logged in!</div>
+        <div className="w-full text-center">
+          You're not logged in!{" "}
+          <Link href="/login">
+            <span className="text-blue-500 text-center">
+              Click here to login
+            </span>
+          </Link>
+        </div>
       )}
     </section>
   );

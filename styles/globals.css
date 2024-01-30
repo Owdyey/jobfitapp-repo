@@ -113,6 +113,10 @@
 .cyan_login_btn {
   @apply rounded-full border bg-cyan-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-cyan-500;
 }
+.white_login_btn {
+  @apply rounded-full border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-cyan-700 hover:bg-slate-200 border-cyan-600;
+}
+
 .orangelg_btn {
   @apply rounded-full border w-full bg-blue-600 py-4 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }
@@ -121,7 +125,7 @@
 }
 
 .white_btn {
-  @apply rounded-full border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-blue-600 text-blue-600 hover:border-blue-400 hover:bg-blue-100;
+  @apply rounded-lg border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-cyan-600 text-cyan-600 hover:border-cyan-400 hover:bg-cyan-400;
 }
 
 .outline_btn {
@@ -138,6 +142,10 @@
 
 .green_gradient {
   @apply bg-gradient-to-r from-green-400 to-green-500 bg-clip-text text-transparent;
+}
+
+.bg_blue_gradient {
+  @apply bg-gradient-to-r from-blue-500 to-cyan-500;
 }
 
 .blue_gradient {

@@ -106,6 +106,9 @@ const Nav = () => {
           <Link href="/login">
             <button className="cyan_login_btn">Login</button>
           </Link>
+          <Link href="/recruiter/login">
+            <button className="white_login_btn">Post Jobs</button>
+          </Link>
         </div>
       )}
     </nav>

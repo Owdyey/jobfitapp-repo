@@ -12,6 +12,21 @@ const LoginPage = () => {
   // Router instance
   const router = useRouter();
 
+  const checkIfDocumentExists = async (collectionName, documentId) => {
+    try {
+      // Reference to the document
+      const documentRef = db.collection(collectionName).doc(documentId);
+
+      // Get the document
+      const documentSnapshot = await documentRef.get();
+
+      // Check if the document exists
+      return documentSnapshot.exists;
+    } catch (error) {
+      console.error("Error checking document existence:", error);
+      return false;
+    }
+  };
   // State variables for email, password, and error handling
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +36,19 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       // Attempt to sign in with the provided email and password
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const userId = userCredential.user.uid;
-      // Redirect to the home page upon successful login
-      router.push("/");
+
+      const exist = await checkIfDocumentExists("users", userId);
+      if (exist) {
+        router.push("/");
+      } else {
+        router.push("/recruiter/profile");
+      }
     } catch (error) {
       console.error("Error during login:", error);
 
