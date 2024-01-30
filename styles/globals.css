@@ -96,10 +96,15 @@
   @apply rounded-lg border bg-blue-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }
 
+.cyan_btn {
+  @apply rounded-lg border bg-cyan-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-cyan-500;
+}
 .blue_login_btn {
   @apply rounded-full border bg-blue-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }
-
+.cyan_login_btn {
+  @apply rounded-full border bg-cyan-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-cyan-500;
+}
 .orangelg_btn {
   @apply rounded-full border w-full bg-blue-600 py-4 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }

@@ -104,7 +104,7 @@ const Nav = () => {
       ) : (
         <div className="flex flex-row gap-3">
           <Link href="/login">
-            <button className="blue_login_btn">Login</button>
+            <button className="cyan_login_btn">Login</button>
           </Link>
         </div>
       )}
