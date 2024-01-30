@@ -25,8 +25,8 @@ const Filter = () => {
           </div>
         </div>
         <div className="w-1/2 flex flex-row justify-end items-center gap-1 me-10">
-          <input type="text" className="search_input " />
-          <button className="rounded-lg border bg-orange-600 py-2.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-orange-500">
+          <input type="text" className="search_input" />
+          <button className="rounded-lg border bg-blue-600 py-2.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500">
             Search
           </button>
         </div>

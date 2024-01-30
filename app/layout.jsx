@@ -1,5 +1,5 @@
-import Nav from "@components/Nav";
 import "@styles/globals.css";
+import Nav from "./components/Nav";
 export const metadata = {
   title: "Jobfit",
   description: "A natural language processing job recomendation system.",
@@ -12,7 +12,7 @@ const RootLayout = ({ children }) => {
         <div className="main">
           <div className="gradient" />
         </div>
-        <main className="app">
+        <main className="app relative">
           <Nav />
           {children}
         </main>

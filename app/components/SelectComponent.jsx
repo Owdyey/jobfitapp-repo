@@ -16,7 +16,7 @@ const SelectComponent = ({ title, choices }) => {
 
   return (
     <div className="relative">
-      <button onClick={handleToggle} className="orange_btn">
+      <button onClick={handleToggle} className="blue_btn">
         {selected}
       </button>
       {toggle && (

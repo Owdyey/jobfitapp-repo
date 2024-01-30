@@ -84,15 +84,31 @@
 .orange_btn {
   @apply rounded-full border bg-orange-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-orange-500;
 }
+
+.yellow_btn {
+  @apply rounded-full border bg-yellow-500 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-orange-500;
+}
+
+.btn {
+  @apply rounded-lg border bg-blue-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-800;
+}
+.blue_btn {
+  @apply rounded-lg border bg-blue-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
+}
+
+.blue_login_btn {
+  @apply rounded-full border bg-blue-600 py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
+}
+
 .orangelg_btn {
-  @apply rounded-full border w-full bg-orange-400 py-4 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-orange-500;
+  @apply rounded-full border w-full bg-blue-600 py-4 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }
 .bluelg_btn {
   @apply rounded-full border w-full bg-blue-400 py-4 px-5 text-center text-sm font-inter flex items-center justify-center text-white hover:bg-blue-500;
 }
 
 .white_btn {
-  @apply rounded-full border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-orange-600 text-orange-600 hover:border-orange-400 hover:bg-orange-100;
+  @apply rounded-full border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-blue-600 text-blue-600 hover:border-blue-400 hover:bg-blue-100;
 }
 
 .outline_btn {
@@ -104,7 +120,7 @@
 }
 
 .orange_gradient {
-  @apply bg-gradient-to-r from-amber-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-cyan-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent;
 }
 
 .green_gradient {
@@ -115,12 +131,56 @@
   @apply bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent;
 }
 
+.blue_gradient_w {
+  @apply bg-gradient-to-r from-white to-white bg-clip-text text-transparent;
+}
+
 .desc {
-  @apply mt-5 text-lg text-gray-600 sm:text-xl max-w-2xl;
+  @apply mt-5 text-xl text-gray-300 sm:text-xl max-w-2xl;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  background-image: url("/homepage_img.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.data-card-title {
+  @apply text-lg text-white;
+}
+
+.text_bg {
+  @apply bg-blue-500;
+}
+
+.data-card-company {
+  @apply text-xs text-gray-200;
+}
+
+.details_text {
+  @apply text-base font-semibold text-slate-700 bg-slate-400 p-1 rounded-sm;
+}
+
+.data-card-desc {
+  @apply text-xs;
+}
+
+.desc_title {
+  @apply text-3xl text-white font-bold;
+}
+
+.desc_small {
+  @apply text-lg text-gray-300;
+}
+
+.desc_body {
+  @apply text-sm text-gray-600;
 }
 
 .search_input {
-  @apply block w-2/4 rounded-md border border-orange-500 bg-white py-2.5 font-satoshi pl-5 pr-12 text-sm shadow-lg font-medium focus:border-orange-500 focus:outline-none focus:ring-0;
+  @apply block w-2/4 rounded-md border border-cyan-500 bg-white py-2.5 font-satoshi pl-5 pr-12 text-sm shadow-lg font-medium focus:border-cyan-500 focus:outline-none focus:ring-0;
 }
 
 .copy_btn {
@@ -158,11 +218,11 @@
 }
 
 .dropdown {
-  @apply absolute right-0 top-full mt-3 w-full p-5 rounded-lg bg-slate-100 border border-orange-300 min-w-[210px] flex flex-col gap-2 justify-end items-start;
+  @apply absolute right-0 top-full mt-3 w-full p-5 rounded-lg bg-slate-100 border border-cyan-300 min-w-[210px] flex flex-col gap-2 justify-end items-start;
 }
 
 .dropdown_link {
-  @apply text-base font-inter text-gray-700 hover:text-gray-500 font-medium;
+  @apply text-base font-inter text-cyan-700 hover:text-cyan-500 font-medium;
 }
 
 /* PromptCard Component */

@@ -5,6 +5,7 @@ import { TextField } from "@mui/material";
 import { auth } from "@utils/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // Functional component for the login page
 const LoginPage = () => {
@@ -38,9 +39,9 @@ const LoginPage = () => {
 
   return (
     <section className="lg:mt-24 w-full flex justify-center">
-      <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border border-orange-300">
+      <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border-2 border-blue-300">
         <h3 className="desc text-center mb-2">
-          <span className="text-orange-600">Login Account</span>
+          <span className="text-blue-600">Login Account</span>
         </h3>
         <div className="flex flex-col gap-5">
           {/* TextField for Email */}
@@ -63,11 +64,17 @@ const LoginPage = () => {
         {showError && <p className="text-red-600">Invalid email or password</p>}
         <div className="flex flex-col gap-2">
           {/* Button to trigger login */}
-          <button className="orangelg_btn" onClick={handleLogin}>
+          <button className="orangelg_btn mt-2" onClick={handleLogin}>
             <span className="text-lg flex">
               <span className="ps-1">Login</span>
             </span>
           </button>
+          <p className="text-normal mt-5">
+            Don't have an account?
+            <Link href={"/login/create-acc"}>
+              <span className=" text-blue-700"> Create an Account</span>
+            </Link>
+          </p>
         </div>
       </div>
     </section>

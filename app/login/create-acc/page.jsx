@@ -1,14 +1,11 @@
 "use client";
 import { TextField } from "@mui/material";
 import { useState, useEffect } from "react";
-import {
-  sendEmailVerification,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "@utils/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +21,7 @@ const SignupPage = () => {
   const [uid, setUid] = useState(null);
   const [notLogin, setNotLogin] = useState(true);
   const router = useRouter();
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const addUserToFirestore = async () => {
     if (uid) {
@@ -39,40 +36,21 @@ const SignupPage = () => {
   const handleSignup = async () => {
     try {
       if (formData.email && formData.password) {
-        const userCredential = await createUserWithEmailAndPassword(
+        await createUserWithEmailAndPassword(
           auth,
           formData.email,
           formData.password
         );
-
-        // Send email verification
       } else {
-        // Handle case where email or password is missing
         console.error("Email and password are required.");
       }
     } catch (error) {
       console.error("Error signing up:", error.message);
-
-      // Handle specific error cases
       if (error.code === "auth/invalid-credential") {
         setCredentialsNotValid(true);
       }
     }
   };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUid(user.uid);
-        setNotLogin(false);
-        addUserToFirestore();
-        router.push("/");
-      } else {
-        setNotLogin(true);
-      }
-    });
-    return () => unsubscribe();
-  }, [uid]);
 
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -91,10 +69,25 @@ const SignupPage = () => {
     }));
   };
 
+  const handleCreateAcc = () => {
+    if (
+      formData.email !== "" ||
+      formData.username !== "" ||
+      formData.password !== "" ||
+      formData.confirmPassword !== ""
+    ) {
+      addUserToFirestore();
+      setShowError(false);
+      router.push("/login/create-acc/complete-profile");
+    } else {
+      setShowError(!false);
+    }
+  };
+
   return (
     <section className="w-full flex justify-center mt-5">
       {notLogin && (
-        <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border border-orange-300">
+        <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border-2 border-blue-300">
           <h3 className="desc text-center mb-2">Create an Account</h3>
           {credentialsNotValid && (
             <div>
@@ -128,6 +121,11 @@ const SignupPage = () => {
               type="password"
               onChange={handleConfirmPasswordChange}
             />
+            {showError ? (
+              <p className="text-red-600">Fields must be filled!</p>
+            ) : (
+              <p></p>
+            )}
             {isNotMatch && (
               <p className="text-red-600">Password doesn't match</p>
             )}
@@ -139,10 +137,12 @@ const SignupPage = () => {
               onClick={handleSignup}
             >
               <span className="text-lg flex">
-                <span className="pe-1">Create Account</span>
+                <span className="pe-1">
+                  <button onClick={handleCreateAcc}>Create Account</button>
+                </span>
               </span>
             </button>
-            <button className="bluelg_btn">
+            <button className="orangelg_btn">
               <span className="text-lg flex">
                 <img
                   src="/assets/icons/google-icon.svg"
