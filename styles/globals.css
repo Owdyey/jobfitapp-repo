@@ -125,7 +125,7 @@
 }
 
 .white_btn {
-  @apply rounded-lg border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-cyan-600 text-cyan-600 hover:border-cyan-400 hover:bg-cyan-400;
+  @apply rounded-lg border bg-white py-1.5 px-5 text-center text-sm font-inter flex items-center justify-center border-cyan-600 text-cyan-600 hover:border-cyan-400 hover:bg-slate-100;
 }
 
 .outline_btn {
