@@ -125,7 +125,7 @@ const YourComponent = () => {
         <div className="flex flex-row justify-around">
           <div className="flex flex-col m-3 py-10 width-27 items-center rounded-md shadow-md bg-white h-full">
             <Avatar
-              className="border-4 border-cyan-500"
+              className="border-4 border-cyan-500 text-cyan-500"
               src={userData.profileImg}
               sx={{ width: 144, height: 144 }}
             />
