@@ -6,6 +6,7 @@ import { auth } from "@utils/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Mistake from "@app/components/Mistake";
 
 // Functional component for the login page
 const LoginPage = () => {
@@ -31,7 +32,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false);
-
+  const [loginMistake, setLoginMistake] = useState(false);
   // Function to handle the login process
   const handleLogin = async () => {
     try {
@@ -43,11 +44,11 @@ const LoginPage = () => {
       );
       const userId = userCredential.user.uid;
 
-      const exist = await checkIfDocumentExists("users", userId);
+      const exist = await checkIfDocumentExists("recruiters", userId);
       if (exist) {
-        router.push("/");
-      } else {
         router.push("/recruiter/profile");
+      } else {
+        setLoginMistake(!false);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -63,43 +64,49 @@ const LoginPage = () => {
 
   return (
     <section className="mt-16 w-full flex justify-center">
-      <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border-2 border-blue-300">
-        <h3 className="desc text-center mb-2">
-          <span className="text-blue-600">Login Account</span>
-        </h3>
-        <div className="flex flex-col gap-5">
-          {/* TextField for Email */}
-          <TextField
-            id="email"
-            label="Email"
-            variant="outlined"
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          {/* TextField for Password */}
-          <TextField
-            id="password"
-            label="Password"
-            type="password"
-            variant="outlined"
-            onChange={(event) => setPassword(event.target.value)}
-          />
+      {loginMistake ? (
+        <Mistake />
+      ) : (
+        <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border-2 border-blue-300">
+          <h3 className="desc text-center mb-2">
+            <span className="text-blue-600">Login Account</span>
+          </h3>
+          <div className="flex flex-col gap-5">
+            {/* TextField for Email */}
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            {/* TextField for Password */}
+            <TextField
+              id="password"
+              label="Password"
+              type="password"
+              variant="outlined"
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </div>
+          {showError && (
+            <p className="text-red-600">Invalid email or password</p>
+          )}
+          <div className="flex flex-col gap-2">
+            {/* Button to trigger login */}
+            <button className="orangelg_btn mt-2" onClick={handleLogin}>
+              <span className="text-lg flex">
+                <span className="ps-1">Login</span>
+              </span>
+            </button>
+            <p className="text-normal mt-5">
+              Don't have an account?
+              <Link href={"/login/create-acc"}>
+                <span className=" text-blue-700"> Create an Account</span>
+              </Link>
+            </p>
+          </div>
         </div>
-        {showError && <p className="text-red-600">Invalid email or password</p>}
-        <div className="flex flex-col gap-2">
-          {/* Button to trigger login */}
-          <button className="orangelg_btn mt-2" onClick={handleLogin}>
-            <span className="text-lg flex">
-              <span className="ps-1">Login</span>
-            </span>
-          </button>
-          <p className="text-normal mt-5">
-            Don't have an account?
-            <Link href={"/login/create-acc"}>
-              <span className=" text-blue-700"> Create an Account</span>
-            </Link>
-          </p>
-        </div>
-      </div>
+      )}
     </section>
   );
 };
