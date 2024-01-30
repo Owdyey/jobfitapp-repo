@@ -1,7 +1,7 @@
 import React from "react";
 
 const page = () => {
-  return <div>recruiter's page</div>;
+  return <div>home ng recruiter</div>;
 };
 
 export default page;
