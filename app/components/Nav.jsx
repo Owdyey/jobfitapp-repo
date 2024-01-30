@@ -6,8 +6,10 @@ import { db, auth } from "@utils/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import Avatar from "@mui/material/Avatar";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, getDoc } from "firebase/firestore";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+// ... (import statements)
 
 const Nav = () => {
   const router = useRouter();
@@ -15,8 +17,24 @@ const Nav = () => {
   const [toggleUser, setToggleUser] = useState(false);
   const [profileimg, setProfileImg] = useState("");
   const [hasProfile, setHasProfile] = useState(false);
+  const [profileLink, setProfileLink] = useState(null);
+  const [homeLink, setHomeLink] = useState("/");
+  const [col, setCol] = useState(null);
+
   const handleToggle = () => {
     setToggleUser(!toggleUser);
+  };
+
+  const checkIfDocumentExists = async (collectionName, documentId) => {
+    try {
+      const collectionRef = collection(db, collectionName);
+      const userDocRef = doc(collectionRef, documentId);
+      const userDocSnapshot = await getDoc(userDocRef);
+      return userDocSnapshot.exists();
+    } catch (error) {
+      console.error("Error checking document existence:", error);
+      return false;
+    }
   };
 
   const handleLogout = async () => {
@@ -27,13 +45,13 @@ const Nav = () => {
       setToggleUser(false);
       router.push("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const handleGoToProfile = () => {
-    setToggleUser(!toggleUser);
-    router.push("/profile");
+    setToggleUser(false);
+    router.push(profileLink);
   };
 
   useEffect(() => {
@@ -41,41 +59,53 @@ const Nav = () => {
       if (user) {
         setLoginStatus(user);
         const uid = user.uid;
-        console.log(uid);
-        const documentRef = doc(db, "users", uid);
 
-        const unsubscribeFirestore = onSnapshot(documentRef, (docSnapshot) => {
-          if (docSnapshot.exists()) {
-            const data = docSnapshot.data();
-            if (data.profileimg) {
-              setProfileImg(data.profileimg);
-              setHasProfile(true);
-            } else {
-              setHasProfile(false);
-            }
+        (async () => {
+          const exist = await checkIfDocumentExists("users", uid);
+          if (exist) {
+            setCol("users");
+            setProfileLink("/profile");
+            setHomeLink("/");
           } else {
-            console.log("document don't exist");
+            setCol("recruiters");
+            setHomeLink("/recruiter"); // Update to point to the recruiter's home page
+            setProfileLink("/recruiter/profile");
           }
-        });
+        })();
 
-        // Unsubscribe from Firestore changes when the component unmounts
-        return () => {
-          unsubscribeFirestore();
-        };
+        if (col && uid) {
+          const documentRef = doc(db, col, uid);
+
+          const unsubscribeFirestore = onSnapshot(
+            documentRef,
+            (docSnapshot) => {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                setHasProfile(data.profileimg ? true : false);
+                setProfileImg(data.profileimg || ""); // Set an empty string if profileimg is not present
+              } else {
+                console.log("Document doesn't exist");
+              }
+            }
+          );
+
+          return () => {
+            unsubscribeFirestore();
+          };
+        }
       } else {
         setLoginStatus(null);
       }
     });
 
-    // Unsubscribe from Auth changes when the component unmounts
     return () => {
       unsubscribeAuth();
     };
-  }, []);
+  }, [col]);
 
   return (
     <nav className="w-full flex flex-between p-5 relative z-50 border-blue-400">
-      <Link href="/">
+      <Link href={homeLink}>
         <Image src={"/jobfitlogo.svg"} width={100} height={100} alt="logo" />
       </Link>
       {loginStatus ? (

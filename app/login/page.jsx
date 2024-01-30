@@ -22,7 +22,6 @@ const LoginPage = () => {
     try {
       // Attempt to sign in with the provided email and password
       await signInWithEmailAndPassword(auth, email, password);
-      const userId = userCredential.user.uid;
       // Redirect to the home page upon successful login
       router.push("/");
     } catch (error) {
