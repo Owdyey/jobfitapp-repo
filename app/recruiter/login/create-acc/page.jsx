@@ -1,7 +1,10 @@
 "use client";
+import React, { useState } from "react";
 import { TextField } from "@mui/material";
-import { useState, useEffect } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { db, auth } from "@utils/firebaseConfig";
 import { setDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -9,51 +12,55 @@ import Link from "next/link";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    company_name: "",
+    contact_no: "",
     email: "",
     password: "",
     confirmPassword: "",
-    verified: false,
   });
 
   const [isNotMatch, setIsNotMatch] = useState(false);
   const [credentialsNotValid, setCredentialsNotValid] = useState(false);
-  const [uid, setUid] = useState(null);
   const [notLogin, setNotLogin] = useState(true);
   const router = useRouter();
   const [showError, setShowError] = useState(false);
 
-  const addUserToFirestore = async () => {
-    if (uid) {
-      const userDocRef = doc(db, "users", uid);
-      await setDoc(userDocRef, {
-        username: formData.username,
-        email: formData.email,
-        verified: formData.verified,
-      });
-    }
+  const addUserToFirestore = async (uid) => {
+    const userDocRef = doc(db, "recruiters", uid);
+    await setDoc(userDocRef, {
+      company_name: formData.company_name,
+      contact_no: formData.contact_no,
+      email: formData.email,
+    });
   };
+
   const handleSignup = async () => {
     try {
       if (
-        formData.email !== "" ||
-        formData.username !== "" ||
-        formData.password !== "" ||
-        formData.confirmPassword !== ""
+        formData.email.trim() === "" ||
+        formData.contact_no.trim() === "" ||
+        formData.company_name.trim() === "" ||
+        formData.password.trim() === "" ||
+        formData.confirmPassword.trim() === ""
       ) {
-        if (formData.email && formData.password) {
-          await createUserWithEmailAndPassword(
-            auth,
-            formData.email,
-            formData.password
-          );
-          router.push("/recruiter/login/create-acc/complete-profile");
-        } else {
-          console.error("Email and password are required.");
-        }
-      } else {
         setShowError(true);
+        return;
       }
+
+      if (formData.password !== formData.confirmPassword) {
+        setIsNotMatch(true);
+        return;
+      }
+
+      const { email, password } = formData;
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const uid = userCredential.user.uid;
+      await addUserToFirestore(uid);
+      router.push("/recruiter");
     } catch (error) {
       console.error("Error signing up:", error.message);
       if (error.code === "auth/invalid-credential") {
@@ -79,37 +86,28 @@ const SignupPage = () => {
     }));
   };
 
-  const handleCreateAcc = () => {
-    if (
-      formData.email !== "" ||
-      formData.username !== "" ||
-      formData.password !== "" ||
-      formData.confirmPassword !== ""
-    ) {
-      addUserToFirestore();
-      setShowError(false);
-      router.push("/login/create-acc/complete-profile");
-    } else {
-      setShowError(!false);
-    }
-  };
-
   return (
     <section className="w-full flex justify-center mt-5">
       {notLogin && (
         <div className="w-5/12 flex flex-col gap-3 rounded-lg px-10 pb-10 pt-3 border-2 border-blue-300">
           <h3 className="text-2xl text-gray-700 text-center mb-2">
-            Create an Account
+            Create Recruiter Account
           </h3>
           {credentialsNotValid && (
             <div>
               <p className="text-red-600">Credentials Invalid!</p>
             </div>
           )}
-          <div className="  flex flex-col gap-5 ">
+          <div className="flex flex-col gap-5">
             <TextField
-              id="username"
-              label="Username"
+              id="company_name"
+              label="Company name"
+              variant="outlined"
+              onChange={handleChange}
+            />
+            <TextField
+              id="contact_no"
+              label="Contact No."
               variant="outlined"
               onChange={handleChange}
             />
@@ -133,13 +131,11 @@ const SignupPage = () => {
               type="password"
               onChange={handleConfirmPasswordChange}
             />
-            {showError ? (
-              <p className="text-red-600">Fields must be filled!</p>
-            ) : (
-              <p></p>
+            {showError && (
+              <p className="text-red-600">All fields must be filled!</p>
             )}
             {isNotMatch && (
-              <p className="text-red-600">Password doesn't match</p>
+              <p className="text-red-600">Passwords don't match</p>
             )}
           </div>
           <div className="flex flex-col gap-2">
@@ -149,16 +145,6 @@ const SignupPage = () => {
               onClick={handleSignup}
             >
               <span className="text-lg">Create Account</span>
-            </button>
-            <button className="orangelg_btn">
-              <span className="text-lg flex">
-                <img
-                  src="/assets/icons/google-icon.svg"
-                  width={25}
-                  alt="google"
-                />
-                <span className="ps-1">Login with Google</span>
-              </span>
             </button>
           </div>
         </div>
