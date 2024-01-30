@@ -47,7 +47,7 @@ const SignupPage = () => {
             formData.email,
             formData.password
           );
-          router.push("/login/create-acc/complete-profile");
+          router.push("/recruiter/login/create-acc/complete-profile");
         } else {
           console.error("Email and password are required.");
         }
