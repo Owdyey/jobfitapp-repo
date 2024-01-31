@@ -1,17 +1,30 @@
-"use client";
 import { useState } from "react";
 import axios from "axios";
 import Report from "@app/components/Report";
 
 const PredictComponent = () => {
-  const [inputDocument, setInputDocument] = useState("");
+  const [inputFile, setInputFile] = useState(null);
   const [prediction, setPrediction] = useState(null);
+
+  const handleFileChange = (e) => {
+    setInputFile(e.target.files[0]);
+  };
 
   const handlePredict = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/predict", {
-        document: inputDocument,
-      });
+      const formData = new FormData();
+      formData.append("file", inputFile);
+
+      const response = await axios.post(
+        "http://localhost:5000/predict",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       setPrediction(response.data);
     } catch (error) {
       console.error("Error predicting:", error);
@@ -34,11 +47,10 @@ const PredictComponent = () => {
 
   return (
     <div>
-      <textarea
-        className="border w-full "
-        value={inputDocument}
-        onChange={(e) => setInputDocument(e.target.value)}
-        placeholder="Enter document for prediction"
+      <input
+        type="file"
+        onChange={handleFileChange}
+        accept=".txt, .pdf, .doc, .docx"
       />
       <button className="cyan_btn" onClick={handlePredict}>
         Predict
