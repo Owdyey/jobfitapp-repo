@@ -46,12 +46,6 @@ const PostedJobs = ({ jobIds }) => {
           <Work className="text-cyan-500" />
           <p className="pl-3 font-bold">Posted Jobs</p>
         </div>
-
-        <div className="self-end w-1/2 flex flex-row justify-end ">
-          <button>
-            <AddCircle className="text-cyan-500" />
-          </button>
-        </div>
       </div>
 
       <div className="flex flex-row gap-4 mt-3">
