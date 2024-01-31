@@ -67,9 +67,9 @@ const LoginPage = () => {
               <span className="ps-1">Login</span>
             </span>
           </button>
-          <p className="text-normal mt-5">
+          <p className="text-normal mt-5 text-center">
             Don't have an account?
-            <Link href={"/login/create-acc"}>
+            <Link href={"/login/create-account"}>
               <span className=" text-blue-700"> Create an Account</span>
             </Link>
           </p>

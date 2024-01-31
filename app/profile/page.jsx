@@ -62,7 +62,7 @@ function checkData(data, set) {
 const YourComponent = () => {
   const [isLogged, setIsLogged] = useState(null);
   const [skills, setSkills] = useState(null);
-  const [address, setAddress] = useState(null);
+  const [location, setLocation] = useState(null);
   const [contact, setContact] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [userData, setUserData] = useState({
@@ -71,9 +71,12 @@ const YourComponent = () => {
     verification: "",
     profileImg: "",
     contactNo: "",
-    address: "",
-    fullname: "",
+    location: "",
+    fullName: "",
     skills: [],
+    //wala pa sa design
+    age: "",
+    gender: "",
   });
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -85,23 +88,24 @@ const YourComponent = () => {
         const unsubscribeFirestore = onSnapshot(documentRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
             const data = docSnapshot.data();
-            setIsLogged(data.verified);
+            setIsLogged(true);
             console.log(data);
             setUserData({
               username: data.username,
               email: data.email,
-              verified: data.verified,
               profileImg: data.profileimg,
               contactNo: data.contactNo,
-              address: data.address,
-              fullname: data.fullname,
+              location: data.location,
+              fullName: data.fullName,
               skills: data.skills,
+              age: data.age,
+              gender: data.gender,
             });
 
             checkData(data.skills, setSkills);
-            checkData(data.fullname, setFullName);
+            checkData(data.fullName, setFullName);
             checkData(data.contactNo, setContact);
-            checkData(data.address, setAddress);
+            checkData(data.location, setLocation);
           } else {
             console.log("document don't exist");
           }
@@ -145,14 +149,14 @@ const YourComponent = () => {
               <OtherInformation
                 icon={<Person />}
                 label={"Full Name"}
-                value={userData.fullname}
+                value={userData.fullName}
               />
             )}
-            {address && (
+            {location && (
               <OtherInformation
                 icon={<LocationOn />}
                 label={"Address"}
-                value={userData.address}
+                value={userData.location}
               />
             )}
 
