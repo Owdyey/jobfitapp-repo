@@ -1,15 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { db } from "@utils/firebaseConfig";
+import { auth, db } from "@utils/firebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Filter from "@app/components/Filter";
 import { useRouter } from "next/navigation";
 import Button from "@app/components/Button";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Cards = ({ onCardClick }) => {
   const [jobs, setJobs] = useState([]);
   const router = useRouter();
+  const [uid, setUid] = useState(null);
+
   useEffect(() => {
     const jobCollection = collection(db, "job_postings");
     const unsubscribe = onSnapshot(jobCollection, (snapshot) => {
@@ -19,6 +22,13 @@ const Cards = ({ onCardClick }) => {
       }));
       setJobs(fetched_data);
     });
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      }
+    });
+
     return () => unsubscribe();
   }, []);
   return (
@@ -71,7 +81,7 @@ const Cards = ({ onCardClick }) => {
               className="p-2 h-2/12 rounded-b-lg flex gap-1 flex-row justify-end border border-t-0 border-x-blue-400 border-b-blue-400"
             >
               <button className="cyan_btn">Apply</button>
-              <Button id={job.id} name={"View"} />
+              <Button id={job.id} name={"View"} uid={uid} />
             </div>
           </div>
         ))}

@@ -2,10 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { db } from "@utils/firebaseConfig"; // Assuming db is the Firestore instance
 import { collection, doc, getDoc } from "firebase/firestore";
-import { AddCircle, LocationOn, Work } from "@mui/icons-material";
+import {
+  AddCircle,
+  LocationOn,
+  VisibilityOutlined,
+  Work,
+} from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
-const Button = ({ id, name, onClick }) => {
+const Button = ({ id, name }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -21,30 +26,25 @@ const Button = ({ id, name, onClick }) => {
 
 const PostedJobs = ({ jobIds }) => {
   const [jobs, setJobs] = useState([]);
+  const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        // Convert the jobIds object keys to an array of IDs
         const idsArray = Object.values(jobIds);
-
-        // Fetch each document individually using its ID
         const fetchedJobs = await Promise.all(
           idsArray.map(async (id) => {
             const userDocRef = doc(collection(db, "job_postings"), id);
             const docSnapshot = await getDoc(userDocRef);
             if (docSnapshot.exists()) {
-              return docSnapshot.data();
+              const jobData = docSnapshot.data();
+              return { id, ...jobData, viewers: jobData.viewers || [] }; // Include viewers array, default to empty array if not present
             } else {
               return null;
             }
           })
         );
-
-        // Filter out null values (documents that don't exist)
         const filteredJobs = fetchedJobs.filter((job) => job !== null);
-
-        // Update the state with the fetched jobs
         setJobs(filteredJobs);
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -63,9 +63,9 @@ const PostedJobs = ({ jobIds }) => {
         </div>
       </div>
 
-      <div className="flex flex-row gap-4 mt-3">
+      <div className="grid grid-cols-2 gap-3 mt-3 w-full bg-red-50">
         {jobs.map((job, index) => (
-          <div className="w-1/2 bg-gray-100 my-2" key={index}>
+          <div className=" bg-gray-100 my-2" key={index}>
             <div
               id="header"
               className="bg-gradient-to-r from-blue-600 to-cyan-500  rounded-t-lg p-2 h-3/12 flex flex-col"
@@ -105,11 +105,19 @@ const PostedJobs = ({ jobIds }) => {
 
             <div
               id="footer"
-              className="p-2 h-2/12 rounded-b-lg flex gap-1 flex-row justify-end border border-t-0 border-x-blue-400 border-b-blue-400"
+              className="p-2 h-2/12 rounded-b-lg flex gap-1 flex-row justify-between border border-t-0 border-x-blue-400 border-b-blue-400"
             >
               {/* <button className="cyan_btn">Apply</button> */}
-              <Button id={jobIds[index]} name={"View"} />
-              <button className="cyan_btn">Delete</button>
+              <div className="pl-2">
+                <VisibilityOutlined className="text-cyan-800" fontSize="14" />
+                <span className="text-cyan-800 text-xs pl-1">
+                  {job.viewers.length}
+                </span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <Button id={jobIds[index]} name={"View"} />
+                <button className="cyan_btn">Delete</button>
+              </div>
             </div>
           </div>
         ))}
