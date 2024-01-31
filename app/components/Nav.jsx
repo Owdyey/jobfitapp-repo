@@ -43,6 +43,7 @@ const Nav = () => {
       console.log("User is Logged Out:");
       setLoginStatus(false);
       setToggleUser(false);
+      setHomeLink("/");
       router.push("/");
     } catch (error) {
       console.error(error);
