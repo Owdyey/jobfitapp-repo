@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { Avatar } from "@mui/material";
 import { Email, LocationOn, Person, Phone } from "@mui/icons-material";
 import Link from "next/link";
+import Predict from "@app/components/Predict";
 
 const InformationFormat = ({ icon, data }) => {
   return (
@@ -136,6 +137,7 @@ const YourComponent = () => {
                 <InformationFormat icon={<Phone />} data={userData.contactNo} />
               )}
             </div>
+            <Predict />
           </div>
 
           <div className="m-3 py-3 width-73 rounded-md shadow-md bg-white h-screen">
