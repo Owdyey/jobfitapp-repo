@@ -4,7 +4,15 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "@utils/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { Avatar } from "@mui/material";
-import { Email, LocationOn, Person, Phone } from "@mui/icons-material";
+import {
+  Email,
+  Female,
+  InsertEmoticon,
+  LocationOn,
+  Male,
+  Person,
+  Phone,
+} from "@mui/icons-material";
 import Link from "next/link";
 import Predict from "@app/components/Predict";
 
@@ -135,38 +143,31 @@ const YourComponent = () => {
               sx={{ width: 144, height: 144 }}
             />
             <div className="mt-3 flex flex-col">
-              <p className="text-center font-bold">{`@${userData.username}`}</p>
+              <p className="text-center font-bold">{userData.fullName}</p>
+              <InformationFormat
+                icon={<Person />}
+                data={`@${userData.username}`}
+              />
               <InformationFormat icon={<Email />} data={userData.email} />
-              {contact && (
-                <InformationFormat icon={<Phone />} data={userData.contactNo} />
+              <InformationFormat icon={<Phone />} data={userData.contactNo} />
+              <InformationFormat
+                icon={<LocationOn />}
+                data={userData.location}
+              />
+              <InformationFormat
+                icon={<InsertEmoticon />}
+                data={`${userData.age} years old`}
+              />
+              {userData.gender === "Female" ? (
+                <InformationFormat icon={<Female />} data={userData.gender} />
+              ) : (
+                <InformationFormat icon={<Male />} data={userData.gender} />
               )}
             </div>
-            <Predict />
           </div>
 
-          <div className="m-3 py-3 width-73 rounded-md shadow-md bg-white h-screen">
-            {fullName && (
-              <OtherInformation
-                icon={<Person />}
-                label={"Full Name"}
-                value={userData.fullName}
-              />
-            )}
-            {location && (
-              <OtherInformation
-                icon={<LocationOn />}
-                label={"Address"}
-                value={userData.location}
-              />
-            )}
-
-            {skills && (
-              <OtherInformationArray
-                icon={<LocationOn />}
-                label={"Skills"}
-                value={userData.skills}
-              />
-            )}
+          <div className="m-3 p-10 width-73 rounded-md shadow-md bg-white h-screen">
+            <Predict />
           </div>
         </div>
       ) : (

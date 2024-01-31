@@ -46,19 +46,24 @@ const PredictComponent = () => {
   };
 
   return (
-    <div>
-      <input
-        type="file"
-        onChange={handleFileChange}
-        accept=".txt, .pdf, .doc, .docx"
-      />
-      <button className="cyan_btn" onClick={handlePredict}>
-        Predict
-      </button>
+    <div className="w-full">
+      <div className="flex flex-row">
+        <input
+          type="file"
+          onChange={handleFileChange}
+          accept=".txt, .pdf, .doc, .docx"
+          className=" w-full"
+        />
+        <button className="cyan_btn" onClick={handlePredict}>
+          Upload
+        </button>
+      </div>
 
       {prediction && (
-        <div className="border p-5 border-cyan-500 rounded-lg">
-          <h2>Top 3 Predictions:</h2>
+        <div className="border p-5 border-cyan-500 rounded-lg mt-5">
+          <p className="font-bold text-center ">
+            Top 3 Job Categories Suggested For You
+          </p>
           <ul className="flex flex-row">
             {getTopThreePredictions().map(([label, value]) => (
               <div
@@ -66,7 +71,7 @@ const PredictComponent = () => {
                 className="flex flex-col justify-center items-center"
               >
                 <Report value={value} />
-                <p>{label}</p>
+                <p>{value}</p>
               </div>
             ))}
           </ul>
