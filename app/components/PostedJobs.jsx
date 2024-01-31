@@ -63,7 +63,7 @@ const PostedJobs = ({ jobIds }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mt-3 w-full bg-red-50">
+      <div className="grid grid-cols-2 gap-3 mt-3 w-full">
         {jobs.map((job, index) => (
           <div className=" bg-gray-100 my-2" key={index}>
             <div
