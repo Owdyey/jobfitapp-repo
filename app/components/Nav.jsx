@@ -69,7 +69,7 @@ const Nav = () => {
             setHomeLink("/");
           } else {
             setCol("recruiters");
-            setHomeLink("/recruiter"); // Update to point to the recruiter's home page
+            setHomeLink("/recruiter/profile"); // Update to point to the recruiter's home page
             setProfileLink("/recruiter/profile");
           }
         })();

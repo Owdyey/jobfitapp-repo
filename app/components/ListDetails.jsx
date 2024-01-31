@@ -205,11 +205,22 @@ export default function NestedModal({ handlePopup, show, userData }) {
       try {
         console.log(details);
         const prediction = await handlePrediction(details);
-        getPrediction(prediction).map(([label, value]) => {
-          handleAddCategory(label);
-          console.log(label);
+        if (!prediction) return [];
+
+        // Sort the predictions by value in descending order
+        const sortedPredictions = Object.entries(prediction).sort(
+          (a, b) => b[1] - a[1]
+        );
+
+        // Take the top 3 predictions
+        const resultprediction = sortedPredictions.slice(0, 1);
+
+        resultprediction.map(([label, value]) => {
+          formData.job_category = label;
         });
         addDataToFirestore(formData, user.uid);
+
+        handleClose();
       } catch (error) {
         console.log(error);
       }

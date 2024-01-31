@@ -38,7 +38,7 @@ const LoginPage = () => {
       const userId = userCredential.user.uid;
       const documentExists = await checkIfDocumentExists("recruiters", userId);
       if (documentExists) {
-        router.push("/recruiter");
+        router.push("/recruiter/profile");
       } else {
         setLoginMistake(true);
       }

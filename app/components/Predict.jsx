@@ -16,7 +16,7 @@ const PredictComponent = () => {
       formData.append("file", inputFile);
 
       const response = await axios.post(
-        "http://localhost:5000/predict",
+        "http://localhost:5000/predict/resume",
         formData,
         {
           headers: {
@@ -60,18 +60,18 @@ const PredictComponent = () => {
       </div>
 
       {prediction && (
-        <div className="border p-5 border-cyan-500 rounded-lg mt-5">
+        <div className="border p-5 border-cyan-500 rounded-lg mt-20">
           <p className="font-bold text-center ">
             Top 3 Job Categories Suggested For You
           </p>
-          <ul className="flex flex-row">
+          <ul className="flex flex-row ">
             {getTopThreePredictions().map(([label, value]) => (
               <div
                 key={label}
-                className="flex flex-col justify-center items-center"
+                className="w-full p-10 flex flex-col justify-between items-center"
               >
                 <Report value={value} />
-                <p>{value}</p>
+                <p className="text-sm">{label}</p>
               </div>
             ))}
           </ul>

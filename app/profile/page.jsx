@@ -133,7 +133,7 @@ const YourComponent = () => {
   }, []);
 
   return (
-    <section className="w-full h-full rounded-lg">
+    <section className="w-full rounded-lg">
       {isLogged ? (
         <div className="flex flex-row justify-around">
           <div className="flex flex-col m-3 py-10 width-27 items-center rounded-md shadow-md bg-white h-full">
