@@ -1,0 +1,255 @@
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+import { TextField } from "@mui/material";
+import { useState } from "react";
+import { AddCircle } from "@mui/icons-material";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 700,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
+
+function ChildModal({ onAddItem, label }) {
+  const [open, setOpen] = useState(false);
+  const [item, setItem] = useState("");
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChange = (event) => {
+    setItem(event.target.value);
+  };
+
+  const handleAddItem = () => {
+    if (item.trim() !== "") {
+      onAddItem(item.trim());
+      setItem("");
+      setOpen(false);
+    }
+  };
+
+  return (
+    <React.Fragment>
+      <button onClick={handleOpen}>
+        <AddCircle className="text-cyan-500 pl-1" />
+      </button>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 500, height: 200 }}>
+          <div className="mt-3">
+            <p>{`Add ${label}`}</p>
+          </div>
+          <div className="mt-3">
+            <TextField
+              className="w-full"
+              id={label}
+              label={label}
+              variant="outlined"
+              value={item}
+              onChange={handleChange}
+            />
+            <button onClick={handleAddItem} className="cyan_btn mt-2 mx-auto">
+              Add
+            </button>
+          </div>
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
+}
+
+export default function NestedModal({ handlePopup, show, userData }) {
+  const [open, setOpen] = React.useState(show);
+  const [formData, setFormData] = React.useState({
+    description: "",
+    job_company: "",
+    job_location: "",
+    job_title: "",
+    job_type: [],
+    qualifications: [],
+    responsibility_items: [],
+    salary: "",
+    shift_and_schedule: [],
+  });
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    handlePopup(false);
+    setOpen(false);
+  };
+
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleAddItem = (item, field) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: [...prevData[field], item],
+    }));
+  };
+
+  const handleSubmit = () => {
+    console.log(formData);
+  };
+
+  return (
+    <div>
+      <Button onClick={handleOpen}>Open modal</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <Box sx={{ ...style, width: "70%", height: "95%" }}>
+          <h2 id="parent-modal-title" className="font-bold">
+            Post a job
+          </h2>
+
+          <div className="w-full mt-5 flex flex-row gap-3">
+            <div className="flex flex-col w-1/2 gap-3">
+              <TextField
+                className="w-full"
+                id="job_title"
+                label="Job Title"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-full"
+                id="job_location"
+                label="Job Location"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-full"
+                id="salary"
+                label="Job Salary"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-full"
+                id="description"
+                label="Job Description"
+                variant="outlined"
+                multiline
+                rows={7}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex flex-col w-1/2 gap-3">
+              <div className="flex flex-row ">
+                <TextField
+                  className="w-full"
+                  id="job_type"
+                  label="Job Type"
+                  variant="outlined"
+                  value={formData.job_type.join(", ")} // Display job types as comma-separated string
+                  InputProps={{ readOnly: true }} // Make it read-only
+                />
+                <ChildModal
+                  onAddItem={(item) => handleAddItem(item, "job_type")}
+                  label="Job Type"
+                />
+              </div>
+
+              <div className="flex flex-row ">
+                <TextField
+                  className="w-full"
+                  id="shift_and_schedule"
+                  label="Shift and Schedule"
+                  variant="outlined"
+                  value={formData.shift_and_schedule.join(", ")} // Display shift and schedule as comma-separated string
+                  InputProps={{ readOnly: true }} // Make it read-only
+                />
+                <ChildModal
+                  onAddItem={(item) =>
+                    handleAddItem(item, "shift_and_schedule")
+                  }
+                  label="Shift and Schedule"
+                />
+              </div>
+
+              <div className="flex flex-row">
+                <TextField
+                  className="w-full"
+                  id="qualifications"
+                  label="Qualifications"
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                  value={formData.qualifications.join(", ")} // Display qualifications as comma-separated string
+                  InputProps={{ readOnly: true }} // Make it read-only
+                />
+                <ChildModal
+                  onAddItem={(item) => handleAddItem(item, "qualifications")}
+                  label="Qualifications"
+                />
+              </div>
+
+              <div className="flex flex-row">
+                <TextField
+                  className="w-full"
+                  id="responsibility"
+                  label="Duties and Responsibilities"
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                  value={formData.responsibility_items.join(", ")} // Display qualifications as comma-separated string
+                  InputProps={{ readOnly: true }} // Make it read-only
+                />
+                <ChildModal
+                  onAddItem={(item) =>
+                    handleAddItem(item, "responsibility_items")
+                  }
+                  label="Duties and Responsibilities"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="justify-center flex flex-row gap-1 mt-5">
+            <button className="cyan_btn" onClick={handleSubmit}>
+              Submit
+            </button>
+            <button className="cyan_btn" onClick={handleClose}>
+              Close
+            </button>
+          </div>
+        </Box>
+      </Modal>
+    </div>
+  );
+}

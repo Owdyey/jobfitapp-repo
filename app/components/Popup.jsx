@@ -5,6 +5,8 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { TextField } from "@mui/material";
+import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -25,6 +27,27 @@ export default function TransitionsModal({ handlePopup, show }) {
     handlePopup(false);
     setOpen(false);
   };
+
+  const [formData, setFormData] = useState({
+    description: "",
+    job_company: "",
+    job_location: "",
+    job_title: "",
+    job_type: [],
+    qualifications: [],
+    responsibility_items: [],
+    salary: "",
+    shift_and_schedule: [],
+  });
+
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
   return (
     <div>
       <Modal
@@ -43,12 +66,55 @@ export default function TransitionsModal({ handlePopup, show }) {
         <Fade in={open}>
           <Box sx={style} className="flex flex-col border">
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              Text in a modal
+              Post a job
             </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-            <div className="self-end flex flex-row gap-1">
+            <div className="w-full mt-5 flex flex-row gap-5">
+              <TextField
+                className="w-1/2"
+                id="job_title"
+                label="Job Title"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-1/2"
+                id="job_company"
+                label="Job Company"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-1/2"
+                id="job_location"
+                label="Job Location"
+                variant="outlined"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full mt-5 flex flex-row gap-5">
+              <TextField
+                className="w-1/2"
+                id="salary"
+                label="Salary"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-1/2"
+                id="job_company"
+                label="Job Company"
+                variant="outlined"
+                onChange={handleChange}
+              />
+              <TextField
+                className="w-1/2"
+                id="job_location"
+                label="Job Location"
+                variant="outlined"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="self-end flex flex-row gap-1 mt-5">
               <button className="cyan_btn" onClick={handleClose}>
                 submit
               </button>

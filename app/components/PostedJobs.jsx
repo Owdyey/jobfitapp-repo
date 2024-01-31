@@ -3,6 +3,21 @@ import React, { useState, useEffect } from "react";
 import { db } from "@utils/firebaseConfig"; // Assuming db is the Firestore instance
 import { collection, doc, getDoc } from "firebase/firestore";
 import { AddCircle, LocationOn, Work } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+
+const Button = ({ id, name, onClick }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/recruiter/profile/${id}`);
+  };
+
+  return (
+    <button onClick={handleClick} className="cyan_btn">
+      {name}
+    </button>
+  );
+};
 
 const PostedJobs = ({ jobIds }) => {
   const [jobs, setJobs] = useState([]);
@@ -53,14 +68,14 @@ const PostedJobs = ({ jobIds }) => {
           <div className="w-1/2 bg-gray-100 my-2" key={index}>
             <div
               id="header"
-              className="bg_blue_gradient rounded-t-lg p-2 h-3/12 flex flex-col"
+              className="bg-gradient-to-r from-blue-600 to-cyan-500  rounded-t-lg p-2 h-3/12 flex flex-col"
             >
               <h1 className="data-card-title">{job.job_title}</h1>
               <p className="data-card-company">{job.job_company}</p>
             </div>
 
-            <div id="Body" className="h-7/12  rounded-b-lg p-3">
-              <p className="text-xs ms-1 my-1  font-semibold">
+            <div id="Body" className="h-7/12 border border-x-blue-400 p-3">
+              <p className="text-xs ms-1 my-1 text-cyan-800 font-semibold">
                 {job.job_location}
                 <LocationOn
                   className="text-cyan-600"
@@ -68,16 +83,33 @@ const PostedJobs = ({ jobIds }) => {
                 />
               </p>
               {job.job_type.map((type, index) => (
-                <p className="text-xs ms-1 my-1  font-semibold" key={index}>
+                <p
+                  className="text-xs ms-1 my-1 text-cyan-800 font-semibold"
+                  key={index}
+                >
                   {type}
                 </p>
               ))}
               {job.shift_and_schedule.map((shift, index) => (
-                <p className="text-xs ms-1 my-1  font-semibold" key={index}>
+                <p
+                  className="text-xs ms-1 my-1 text-cyan-800 font-semibold"
+                  key={index}
+                >
                   {shift}
                 </p>
               ))}
-              <p className="text-xs ms-1  font-semibold m-1">{job.salary}</p>
+              <p className="text-xs ms-1 text-cyan-800 font-semibold m-1">
+                {job.salary}
+              </p>
+            </div>
+
+            <div
+              id="footer"
+              className="p-2 h-2/12 rounded-b-lg flex gap-1 flex-row justify-end border border-t-0 border-x-blue-400 border-b-blue-400"
+            >
+              {/* <button className="cyan_btn">Apply</button> */}
+              <Button id={jobIds[index]} name={"View"} />
+              <button className="cyan_btn">Delete</button>
             </div>
           </div>
         ))}
