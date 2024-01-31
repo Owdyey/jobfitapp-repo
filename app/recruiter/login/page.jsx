@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { TextField, useRadioGroup } from "@mui/material";
+import { TextField } from "@mui/material";
 import { auth, db } from "@utils/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -85,9 +85,9 @@ const LoginPage = () => {
                 <span className="ps-1">Login</span>
               </span>
             </button>
-            <p className="text-normal mt-5">
+            <p className="text-normal mt-5 text-center">
               Don't have an account?
-              <Link href={"/recruiter/login/create-acc"}>
+              <Link href={"/recruiter/login/create-account"}>
                 <span className="text-blue-700"> Create an Account</span>
               </Link>
             </p>
