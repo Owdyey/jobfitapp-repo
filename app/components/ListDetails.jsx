@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@utils/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -101,7 +102,33 @@ export default function NestedModal({ handlePopup, show, userData }) {
     responsibility_items: [],
     salary: "",
     shift_and_schedule: [],
+    job_category: null,
   });
+  const handlePrediction = async (details) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/predict/category",
+        {
+          document: details,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getPrediction = (pred) => {
+    if (!pred) return [];
+
+    // Sort the predictions by value in descending order
+    const sortedPredictions = Object.entries(pred).sort((a, b) => b[1] - a[1]);
+
+    // Take the top 3 predictions
+    const resultprediction = sortedPredictions.slice(0, 1);
+
+    return resultprediction;
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -146,23 +173,46 @@ export default function NestedModal({ handlePopup, show, userData }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleAddCategory = (label) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      job_category: label,
+    }));
+  };
+
+  const handleSubmit = async () => {
     if (
-      formData.description === "" &&
-      formData.description === "" &&
-      formData.job_company === "" &&
-      formData.job_location === "" &&
-      formData.job_title === "" &&
-      formData.job_type === null &&
-      formData.qualifications === null &&
-      formData.responsibility_items === null &&
-      formData.salary === "" &&
+      formData.description === "" ||
+      formData.job_company === "" ||
+      formData.job_location === "" ||
+      formData.job_title === "" ||
+      formData.job_type === null ||
+      formData.qualifications === null ||
+      formData.responsibility_items === null ||
+      formData.salary === "" ||
       formData.shift_and_schedule === null
     ) {
       alert("Fields cannot be empty!");
-      console.log(formData);
     } else {
-      addDataToFirestore(formData, user.uid);
+      const details =
+        formData.job_title +
+        " " +
+        formData.description +
+        formData.job_type.join(", ") +
+        formData.qualifications.join(", ") +
+        formData.responsibility_items.join(", ") +
+        formData.shift_and_schedule.join(", ");
+      try {
+        console.log(details);
+        const prediction = await handlePrediction(details);
+        getPrediction(prediction).map(([label, value]) => {
+          handleAddCategory(label);
+          console.log(label);
+        });
+        addDataToFirestore(formData, user.uid);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
