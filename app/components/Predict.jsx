@@ -35,7 +35,7 @@ const PredictComponent = () => {
   return (
     <div>
       <textarea
-        className="border w-full"
+        className="border w-full "
         value={inputDocument}
         onChange={(e) => setInputDocument(e.target.value)}
         placeholder="Enter document for prediction"
