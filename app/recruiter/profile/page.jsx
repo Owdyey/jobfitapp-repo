@@ -22,6 +22,7 @@ const InformationFormat = ({ icon, data }) => {
 const page = () => {
   const [isLogged, setIsLogged] = useState(null);
   const [popup, setPopup] = useState(false);
+  const [uid, setUid] = useState(null);
   const [userData, setUserData] = useState({
     companyName: "",
     email: "",
@@ -35,6 +36,8 @@ const page = () => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
+        setUid(uid);
+
         const documentRef = doc(db, "recruiters", uid);
         setIsLogged(true);
         const unsubscribeFirestore = onSnapshot(documentRef, (docSnapshot) => {
@@ -93,7 +96,7 @@ const page = () => {
           </div>
           <div className="m-3 py-3 width-73 rounded-md shadow-md bg-white h-screen">
             {userData.job_posted ? (
-              <PostedJobs jobIds={userData.job_posted} />
+              <PostedJobs jobIds={userData.job_posted} uid={uid} />
             ) : (
               <p className="text-center mt-8 text-slate-600 align-middle font-semibold">
                 No job posted

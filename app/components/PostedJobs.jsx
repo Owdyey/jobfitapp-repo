@@ -1,7 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { db } from "@utils/firebaseConfig"; // Assuming db is the Firestore instance
-import { collection, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import {
   AddCircle,
   LocationOn,
@@ -23,10 +30,34 @@ const Button = ({ id, name }) => {
     </button>
   );
 };
+const handleDelete = async (jobId, uid) => {
+  try {
+    const jobDocRef = doc(db, "job_postings", jobId);
+    const userDocRef = doc(db, "recruiters", uid);
 
-const PostedJobs = ({ jobIds }) => {
+    // Get the user document data synchronously
+    const userDocSnapshot = await getDoc(userDocRef);
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const updatedArray = userData["job_posted"].filter(
+        (item) => item !== jobId
+      );
+
+      // Update the job_posted array in the user document
+      await updateDoc(userDocRef, { job_posted: updatedArray });
+    }
+
+    console.log("Item deleted from array successfully!");
+
+    // Delete the job document
+    await deleteDoc(jobDocRef);
+  } catch (error) {
+    console.error("Error deleting:", error.message);
+  }
+};
+
+const PostedJobs = ({ jobIds, uid }) => {
   const [jobs, setJobs] = useState([]);
-  const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -116,7 +147,12 @@ const PostedJobs = ({ jobIds }) => {
               </div>
               <div className="flex flex-row gap-1">
                 <Button id={jobIds[index]} name={"View"} />
-                <button className="cyan_btn">Delete</button>
+                <button
+                  className="cyan_btn"
+                  onClick={() => handleDelete(job.id, uid)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>
