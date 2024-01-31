@@ -74,7 +74,7 @@ const PostedJobs = ({ jobIds }) => {
               <p className="data-card-company">{job.job_company}</p>
             </div>
 
-            <div id="Body" className="h-7/12 border border-x-blue-400 p-3">
+            <div id="Body" className="h-7/12 border border-x-blue-400 p-3 h-32">
               <p className="text-xs ms-1 my-1 text-cyan-800 font-semibold">
                 {job.job_location}
                 <LocationOn

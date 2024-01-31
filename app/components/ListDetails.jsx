@@ -5,6 +5,15 @@ import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
 import { useState } from "react";
 import { AddCircle } from "@mui/icons-material";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "@utils/firebaseConfig";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const style = {
   position: "absolute",
@@ -81,9 +90,10 @@ function ChildModal({ onAddItem, label }) {
 
 export default function NestedModal({ handlePopup, show, userData }) {
   const [open, setOpen] = React.useState(show);
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = React.useState({
     description: "",
-    job_company: "",
+    job_company: userData.companyName,
     job_location: "",
     job_title: "",
     job_type: [],
@@ -117,9 +127,55 @@ export default function NestedModal({ handlePopup, show, userData }) {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
+  const addDataToFirestore = async (data, uid) => {
+    try {
+      const collectionRef = collection(db, "job_postings");
+      const documentRef = doc(db, "recruiters", uid);
+
+      // Add the new job postings to the "job_postings" collection
+      const docRef = await addDoc(collectionRef, data);
+      console.log("Document added with ID:", docRef.id);
+
+      // Update the "job_posted" field in the recruiter document with the new job posting ID
+      await updateDoc(documentRef, {
+        job_posted: arrayUnion(docRef.id),
+      });
+      console.log("Document successfully updated with new job posting!");
+    } catch (error) {
+      console.error("Error adding documents:", error);
+    }
   };
+
+  const handleSubmit = () => {
+    if (
+      formData.description === "" &&
+      formData.description === "" &&
+      formData.job_company === "" &&
+      formData.job_location === "" &&
+      formData.job_title === "" &&
+      formData.job_type === null &&
+      formData.qualifications === null &&
+      formData.responsibility_items === null &&
+      formData.salary === "" &&
+      formData.shift_and_schedule === null
+    ) {
+      alert("Fields cannot be empty!");
+      console.log(formData);
+    } else {
+      addDataToFirestore(formData, user.uid);
+    }
+  };
+
+  React.useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Set user state based on the authentication state change
+      setUser(user);
+    });
+
+    // Clean up subscription
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div>
