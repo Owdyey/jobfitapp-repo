@@ -73,6 +73,7 @@ const YourComponent = () => {
   const [location, setLocation] = useState(null);
   const [contact, setContact] = useState(null);
   const [fullName, setFullName] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -82,7 +83,6 @@ const YourComponent = () => {
     location: "",
     fullName: "",
     skills: [],
-    //wala pa sa design
     age: "",
     gender: "",
   });
@@ -91,6 +91,7 @@ const YourComponent = () => {
       if (user) {
         const uid = user.uid;
         console.log(uid);
+        setUserId(uid);
         const documentRef = doc(db, "users", uid);
 
         const unsubscribeFirestore = onSnapshot(documentRef, (docSnapshot) => {
@@ -166,8 +167,8 @@ const YourComponent = () => {
             </div>
           </div>
 
-          <div className="m-3 p-10 width-73 rounded-md shadow-md bg-white h-screen">
-            <Predict />
+          <div className="m-3 p-10 width-73 rounded-md shadow-md bg-white">
+            <Predict skill={userData.skills} uid={userId} />
           </div>
         </div>
       ) : (
