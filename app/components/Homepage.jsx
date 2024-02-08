@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 const Homepage = () => {
   const router = useRouter();
   return (
-    <section className="ms-8 w-full relative container p-10">
+    <section className=" w-full relative container p-10">
       <div className="head_text blue_gradient_w w-full">
         Discover jobs that match your profile!
       </div>

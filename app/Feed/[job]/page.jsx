@@ -6,9 +6,11 @@ import {
   Work,
   WorkHistory,
 } from "@mui/icons-material";
-import { db } from "@utils/firebaseConfig";
+import { auth, db } from "@utils/firebaseConfig";
 import { doc, onSnapshot } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 
 const DetailInfo = ({ icon, label, data }) => {
   return (
@@ -74,7 +76,8 @@ const DetailBodyArray = ({ label, data }) => {
 const Page = ({ params }) => {
   const [id, setId] = useState(null);
   const [details, setDetails] = useState([]);
-
+  const router = useRouter();
+  const [uid, setUid] = useState(null);
   useEffect(() => {
     // Use the first entry from params to set the id
     const [key, value] = Object.entries(params)[0];
@@ -88,6 +91,11 @@ const Page = ({ params }) => {
       } else {
         console.log("document don't exist");
       }
+      const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUid(user.uid);
+        }
+      });
     });
 
     // Unsubscribe from Firestore changes when the component unmounts
@@ -95,13 +103,16 @@ const Page = ({ params }) => {
       unsubscribeFirestore();
     };
   }, [params]);
-
+  const handleBack = () => {
+    router.back();
+    console.log("back");
+  };
   return (
     <section className="w-full rounded-lg flex flex-col h-screen">
       <div className="w-2/3 self-center">
         <div className="bg_blue_gradient flex flex-row w-full rounded-t-md p-5 sticky top-0 items-center">
           <div className="w-5/6 flex flex-row items-center gap-4">
-            <button>
+            <button onClick={handleBack}>
               <ArrowCircleLeft className="text-white text-3xl" />
             </button>
 
