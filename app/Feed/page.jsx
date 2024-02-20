@@ -33,7 +33,7 @@ const Cards = ({ onCardClick }) => {
       }
       if (userDocSnapShot.exists()) {
         const userdata = userDocSnapShot.data();
-        userSkills = userdata.skills;
+        userSkills = userdata.job_recommendations;
       } else {
         console.log("No user with ID:", userId);
       }

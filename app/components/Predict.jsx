@@ -57,7 +57,13 @@ const PredictComponent = ({ uid }) => {
 
       try {
         const userDocRef = doc(db, "users", uid);
-        await updateSkillsInFirestore(userDocRef, topPredictions);
+        const jobRecommendations = topPredictions.map(({ label }) => label);
+
+        await updateSkillsInFirestore(
+          userDocRef,
+          topPredictions,
+          jobRecommendations
+        );
         console.log("Skills field updated in Firestore");
       } catch (error) {
         console.error("Error updating skills field:", error);
@@ -82,10 +88,15 @@ const PredictComponent = ({ uid }) => {
   };
 
   // Function to handle skills update in Firestore
-  const updateSkillsInFirestore = async (userDocRef, skills) => {
+  const updateSkillsInFirestore = async (
+    userDocRef,
+    skills,
+    jobRecommendations
+  ) => {
     try {
       await updateDoc(userDocRef, {
         skills,
+        job_recommendations: jobRecommendations,
       });
     } catch (error) {
       console.error("Error updating skills field:", error);
