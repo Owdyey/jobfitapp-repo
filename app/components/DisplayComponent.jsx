@@ -3,9 +3,9 @@ import Report from "@app/components/Report";
 
 const DisplayComponent = ({ label, value }) => {
   return (
-    <div className="border border-blue-600 rounded-lg flex flex-col justify-center items-center p-10">
+    <div className="border border-blue-600 rounded-lg flex flex-col justify-center items-center p-10 gap-3 shadow-lg">
       <Report value={value} />
-      <p>{label}</p>
+      <p className="font-semibold text-blue-600">{label}</p>
     </div>
   );
 };

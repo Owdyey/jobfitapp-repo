@@ -6,6 +6,7 @@ import { db } from "@utils/firebaseConfig";
 import DisplayComponent from "./DisplayComponent";
 
 const PredictComponent = ({ uid }) => {
+  const router = useRouter();
   const [inputFile, setInputFile] = useState(null);
   const [hasNoSkills, setHasNoSkills] = useState(true);
   const [uploadedFile, setUploadedFile] = useState("Upload File here");
@@ -143,7 +144,9 @@ const PredictComponent = ({ uid }) => {
             ))}
           </div>
 
-          <button className="blue_btn">Got it!</button>
+          <button className="blue_btn" onClick={() => router.push("/Feed")}>
+            Got it!
+          </button>
         </div>
       )}
     </div>
