@@ -12,16 +12,12 @@ const PredictComponent = ({ skill, uid }) => {
   const [uploadedFile, setUploadedFile] = useState("Upload File here");
   const [showPredictions, setShowPredictions] = useState(false);
 
-  const handleOkay = () => {
-    router.push("/Feed");
-  };
-
   const handleFileChange = (e) => {
     setInputFile(e.target.files[0]);
-    setUploadedFile(e.target.files[0].name);
+    setUploadedFile(e.target.files[0]?.name || "Upload File here");
   };
 
-  const handlePredict = async () => {
+  const handlePredictCommon = async () => {
     try {
       if (!inputFile) {
         console.error("No file uploaded");
@@ -45,98 +41,55 @@ const PredictComponent = ({ skill, uid }) => {
       console.log(predictedSkills);
       if (!predictedSkills) return [];
 
-      // Extract the top three predicted skills
-      const topThreePredictions = predictedSkills
+      const threshold = 0.65;
+
+      // Filter predictions with values greater than or equal to 0.5
+      const filteredPredictions = predictedSkills.filter(
+        ([label, value]) => value >= threshold
+      );
+
+      // Extract the top predictions
+      const topPredictions = filteredPredictions
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
         .map(([label]) => label);
 
       try {
         const userDocRef = doc(db, "users", uid);
-        await updateDoc(userDocRef, {
-          skills: topThreePredictions,
-        });
-
+        await updateSkillsInFirestore(userDocRef, topPredictions);
         console.log("Skills field updated in Firestore");
       } catch (error) {
         console.error("Error updating skills field:", error);
       }
 
       setPrediction(response.data);
-      setHasNoSkills(false);
-      setShowPredictions(true);
+      setHasNoSkills(topPredictions.length === 0);
     } catch (error) {
       console.error("Error predicting:", error);
     }
   };
 
+  const handlePredict = async () => {
+    await handlePredictCommon();
+    setShowPredictions(true);
+  };
+
   const handlePredictUpdate = async () => {
+    await handlePredictCommon();
+  };
+
+  const updateSkillsInFirestore = async (userDocRef, skills) => {
     try {
-      if (!inputFile) {
-        console.error("No file uploaded");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", inputFile);
-
-      const response = await axios.post(
-        "http://localhost:5000/predict/resume/file",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      const predictedSkills = Object.entries(response.data);
-      console.log(predictedSkills);
-      if (!predictedSkills) return [];
-
-      // Extract the top three predicted skills
-      const topThreePredictions = predictedSkills
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([label]) => label);
-
-      try {
-        const userDocRef = doc(db, "users", uid);
-        await updateDoc(userDocRef, {
-          skills: topThreePredictions,
-        });
-
-        console.log("Skills field updated in Firestore");
-      } catch (error) {
-        console.error("Error updating skills field:", error);
-      }
-
-      setPrediction(response.data);
-      setHasNoSkills(false);
+      await updateDoc(userDocRef, {
+        skills,
+      });
     } catch (error) {
-      console.error("Error predicting:", error);
+      console.error("Error updating skills field:", error);
     }
   };
 
   useEffect(() => {
-    if (skill && skill.length > 0) {
-      setHasNoSkills(false);
-    } else {
-      setHasNoSkills(true);
-    }
+    setHasNoSkills(!skill || skill.length === 0);
   }, [skill]);
-
-  const getTopThreePredictions = () => {
-    if (!prediction) return [];
-
-    const sortedPredictions = Object.entries(prediction).sort(
-      (a, b) => b[1] - a[1]
-    );
-
-    const topThreePredictions = sortedPredictions.slice(0, 3);
-
-    return topThreePredictions;
-  };
 
   return (
     <div className="w-full h-full">
@@ -188,7 +141,7 @@ const PredictComponent = ({ skill, uid }) => {
                 ))}
             </div>
             <button
-              onClick={handleOkay}
+              onClick={() => router.push("/Feed")}
               className="blue_btn w-1/6 self-center mt-3"
             >
               Got it!
