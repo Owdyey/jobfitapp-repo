@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@utils/firebaseConfig";
+import DisplayComponent from "./DisplayComponent";
 
-const PredictComponent = ({ skill, uid }) => {
-  const router = useRouter();
+const PredictComponent = ({ uid }) => {
   const [inputFile, setInputFile] = useState(null);
-  const [prediction, setPrediction] = useState(null);
   const [hasNoSkills, setHasNoSkills] = useState(true);
   const [uploadedFile, setUploadedFile] = useState("Upload File here");
-  const [showPredictions, setShowPredictions] = useState(false);
+  const [displaySkill, setDisplaySkill] = useState([]);
 
+  // Function to handle file change
   const handleFileChange = (e) => {
     setInputFile(e.target.files[0]);
     setUploadedFile(e.target.files[0]?.name || "Upload File here");
   };
 
+  // Common function for prediction
   const handlePredictCommon = async () => {
     try {
       if (!inputFile) {
@@ -51,7 +52,7 @@ const PredictComponent = ({ skill, uid }) => {
       // Extract the top predictions
       const topPredictions = filteredPredictions
         .sort((a, b) => b[1] - a[1])
-        .map(([label]) => label);
+        .map(([label, value]) => ({ label, value }));
 
       try {
         const userDocRef = doc(db, "users", uid);
@@ -60,23 +61,26 @@ const PredictComponent = ({ skill, uid }) => {
       } catch (error) {
         console.error("Error updating skills field:", error);
       }
-
-      setPrediction(response.data);
       setHasNoSkills(topPredictions.length === 0);
     } catch (error) {
       console.error("Error predicting:", error);
+      // Add appropriate error handling or user feedback here
     }
   };
 
-  const handlePredict = async () => {
-    await handlePredictCommon();
-    setShowPredictions(true);
+  // Function to handle initial document fetch and set up real-time listener
+  const setupSkillsListener = () => {
+    const userDocRef = doc(db, "users", uid);
+
+    // Set up real-time listener for changes to the skills field
+    return onSnapshot(userDocRef, (doc) => {
+      const userSkills = doc.data()?.skills || [];
+      setDisplaySkill(userSkills);
+      setHasNoSkills(!userSkills || userSkills.length === 0);
+    });
   };
 
-  const handlePredictUpdate = async () => {
-    await handlePredictCommon();
-  };
-
+  // Function to handle skills update in Firestore
   const updateSkillsInFirestore = async (userDocRef, skills) => {
     try {
       await updateDoc(userDocRef, {
@@ -88,12 +92,16 @@ const PredictComponent = ({ skill, uid }) => {
   };
 
   useEffect(() => {
-    setHasNoSkills(!skill || skill.length === 0);
-  }, [skill]);
+    // Set up the initial data fetch and real-time listener
+    const unsubscribe = setupSkillsListener();
+
+    // Clean up the listener when the component is unmounted
+    return () => unsubscribe();
+  }, [uid]);
 
   return (
     <div className="w-full h-full">
-      {!showPredictions && hasNoSkills ? (
+      {hasNoSkills ? (
         <div className="w-full h-full flex flex-col items-center justify-center gap-5">
           <div className="flex flex-row gap-5">
             <input
@@ -110,7 +118,7 @@ const PredictComponent = ({ skill, uid }) => {
               {uploadedFile}
             </label>
           </div>
-          <button className="cyan_btn" onClick={handlePredict}>
+          <button className="cyan_btn" onClick={handlePredictCommon}>
             Upload
           </button>
         </div>
@@ -118,35 +126,24 @@ const PredictComponent = ({ skill, uid }) => {
         <div className="flex flex-col w-full gap-10">
           <div className="w-full flex flex-row justify-between">
             <input id="updateFile" type="file" onChange={handleFileChange} />
-            <button className="blue_btn" onClick={handlePredictUpdate}>
+            <button className="blue_btn" onClick={handlePredictCommon}>
               Update Profile
             </button>
           </div>
-
-          <div className=" flex  flex-col w-full">
-            <p className="font-bold text-center text-3xl blue_gradient p-2">
-              Job Categories Suggested For You
-            </p>
-            <div className="flex flex-row gap-3 mt-7">
-              {skill &&
-                skill.map((skill) => (
-                  <div
-                    key={skill}
-                    className="w-full p-10 flex flex-col justify-between items-center border rounded-lg border-blue-600"
-                  >
-                    <p className="text-sm text-center font-bold blue_gradient w-full">
-                      {skill}
-                    </p>
-                  </div>
-                ))}
-            </div>
-            <button
-              onClick={() => router.push("/Feed")}
-              className="blue_btn w-1/6 self-center mt-3"
-            >
-              Got it!
-            </button>
+        </div>
+      )}
+      {!hasNoSkills && (
+        <div className="flex flex-col justify-center gap-5 h-full items-center">
+          <p className="text-lg">Jobs Recommended for you!</p>
+          <div className="flex flex-row justify-center gap-5 items-center">
+            {displaySkill.map(({ label, value }) => (
+              <div key={label}>
+                <DisplayComponent label={label} value={value} />
+              </div>
+            ))}
           </div>
+
+          <button className="blue_btn">Got it!</button>
         </div>
       )}
     </div>
